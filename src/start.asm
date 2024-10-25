@@ -4,11 +4,16 @@ section .rodata
     annoy db 0xff, 0xff, 0xff, 0xff, 0x0f
     testing db "YES", 0
 
+    status_packet db 155, 2, 0, 152, 2, "{'version': {'name': '1.20.4','protocol': 765},'players': {'max': 1337,'online': 1337,'sample': [{'name': 'thinkofdeath','id': '4566e69f-c907-48ee-8d71-d7ba5aa00d20'}]},'description': {'text': 'Hello, world!'},'favicon': 'data:image/png;base64,<data>','enforcesSecureChat': false}"
+
 section .bss
-    buffer resb 8
+    buffer resb 2097151
 
 section .text
     global _start
+
+    extern malloc
+    extern free
 
 _start:
     ; TESTING
@@ -56,27 +61,56 @@ accept:
     syscall
     ; TESTING
     mov r12, rax
+    ; MORE TESTING
+    xor r13, r13
 
 read:
     mov rax, 0  ; read syscall
     mov rdi, r12
     lea rsi, [buffer]
-    mov rdx, 1
+    mov rdx, 2097151
     syscall
     lea rdi, [buffer]
-    add rdi, 4
     call read_varint
-    lea rdi, [buffer]
+    inc rdi
     call read_varint
-    ;cmp byte [rdi], 'A'
-    ;je yes
+    inc rdi
+    call read_varint
+    inc rdi
+    call read_varint
+    inc rdi
+
+
+    ; Printing the Host c:
+    mov rdx, rax
+    mov rax, 1
+    mov rsi, rdi
+    mov rdi, 0
+    syscall
+    call exit
+    ; Well...
+
+    ;cmp r13, 1
+    ;je send
+    ;inc r13
+    ;jmp read
+;send:
+
+
+    ; SEND
+    ;mov rax, 1
+    ;mov rdi, r12
+    ;lea rsi, [status_packet]
+    ;mov rdx, 2097151
+    ;syscall
+    ; END
+
+
+
     ;call print
+    ;call exit
+
     jmp read
-yes:
-    lea rdi, [testing]
-    call print
-    ;lea rdi, [buffer]
-    ;call print
 
 test:
     jmp read
