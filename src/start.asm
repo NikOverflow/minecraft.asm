@@ -4,7 +4,13 @@ section .rodata
     annoy db 0xff, 0xff, 0xff, 0xff, 0x0f
     testing db "YES", 0
 
-    status_packet db 155, 2, 0, 152, 2, "{'version': {'name': '1.20.4','protocol': 765},'players': {'max': 1337,'online': 1337,'sample': [{'name': 'thinkofdeath','id': '4566e69f-c907-48ee-8d71-d7ba5aa00d20'}]},'description': {'text': 'Hello, world!'},'favicon': 'data:image/png;base64,<data>','enforcesSecureChat': false}"
+    status_packet db 241, 1, 0, 238, 1, '{"version": {"name": "1.20.4","protocol": 765},"players": {"max": 1337,"online": 1337,"sample": [{"name": "thinkofdeath","id": "4566e69f-c907-48ee-8d71-d7ba5aa00d20"}]},"description": {"text": "Hello, world!"},"enforcesSecureChat": false}'
+
+; Config (Planned):
+; server-ip=0.0.0.0
+; server-port=1337
+; max-players=1337
+; motd=§4Don't learn to hack... Hack to learn.
 
 section .bss
     buffer resb 2097151
@@ -74,35 +80,35 @@ read:
     call read_varint
     inc rdi
     call read_varint
-    inc rdi
-    call read_varint
-    inc rdi
-    call read_varint
-    inc rdi
+    ;inc rdi
+    ;call read_varint
+    ;inc rdi
+    ;call read_varint
+    ;inc rdi
 
 
     ; Printing the Host c:
-    mov rdx, rax
-    mov rax, 1
-    mov rsi, rdi
-    mov rdi, 0
-    syscall
-    call exit
+    ;mov rdx, rax
+    ;mov rax, 1
+    ;mov rsi, rdi
+    ;mov rdi, 0
+    ;syscall
+    ;call exit
     ; Well...
 
-    ;cmp r13, 1
-    ;je send
-    ;inc r13
-    ;jmp read
-;send:
+    cmp r13, 1
+    je send
+    inc r13
+    jmp read
+send:
 
 
     ; SEND
-    ;mov rax, 1
-    ;mov rdi, r12
-    ;lea rsi, [status_packet]
-    ;mov rdx, 2097151
-    ;syscall
+    mov rax, 1
+    mov rdi, r12
+    lea rsi, [status_packet]
+    mov rdx, 2097151
+    syscall
     ; END
 
 
